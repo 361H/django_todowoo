@@ -13,8 +13,8 @@ def home(request):
 
 def signupuser(request):
     if request.method == 'GET':
-        return render(request, 'todo/signupUser.html', {'form':UserCreationForm})
-    
+        return render(request, 'todo/signupuser.html', {'form':UserCreationForm})
+
     else:
         if request.POST['password1'] == request.POST['password2']:
             try:
@@ -25,14 +25,14 @@ def signupuser(request):
 
             except IntegrityError:
                 return render(request, 'todo/signupuser.html', {'form':UserCreationForm(), 'error': 'That username has already been taken!, Please choose a new username'})
-            
+
         else:
             return render(request, 'todo/signupuser.html', {'form':UserCreationForm(), 'error': 'Passwords did not match!'})
 
 def loginuser(request):
     if request.method == 'GET':
         return render(request, 'todo/loginuser.html', {'form':AuthenticationForm})
-    
+
     else:
         user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
         if user is None:
@@ -47,11 +47,11 @@ def logoutuser(request):
         logout(request)
         return redirect('home')
 
-@login_required    
+@login_required
 def createtodo(request):
     if request.method == 'GET':
         return render(request, 'todo/createtodo.html', {'form':TodoForm()})
-        
+
     else:
         try:
             form = TodoForm(request.POST)
@@ -59,7 +59,7 @@ def createtodo(request):
             newtodo.user = request.user
             newtodo.save()
             return redirect('currenttodos')
-        
+
         except ValueError:
             return render(request, 'todo/createtodo.html', {'form':TodoForm(), 'error':'Bad data passed in!. try agian my friend.'})
 
@@ -79,7 +79,7 @@ def viewtodo(request, todo_pk):
     if request.method == 'GET':
         form = TodoForm(instance=todo)
         return render(request, 'todo/viewtodo.html', {'todo':todo, 'form':form})
-        
+
     else:
         try:
             form = TodoForm(request.POST, instance=todo)
@@ -89,7 +89,7 @@ def viewtodo(request, todo_pk):
         except ValueError:
             return render(request, 'todo/viewtodo.html', {'todo':todo, 'form':form, 'error':'bad info!'})
 
-@login_required   
+@login_required
 def completetodo(request, todo_pk):
     todo = get_object_or_404(Todo, pk=todo_pk, user=request.user)
     if request.method == 'POST':
